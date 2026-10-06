@@ -85,6 +85,8 @@ pipeline {
         success {
             slackSend(
                 channel: env.SLACK_CHANNEL,
+                tokenCredentialId: 'slack-token',
+                botUser: true,
                 color: 'good',
                 message: "✅ ÉXITO: ${env.JOB_NAME} #${env.BUILD_NUMBER} finalizó correctamente.\n${env.BUILD_URL}"
             )
@@ -92,6 +94,8 @@ pipeline {
         failure {
             slackSend(
                 channel: env.SLACK_CHANNEL,
+                tokenCredentialId: 'slack-token',
+                botUser: true,
                 color: 'danger',
                 message: "❌ ERROR: ${env.JOB_NAME} #${env.BUILD_NUMBER} falló.\n${env.BUILD_URL}console"
             )
