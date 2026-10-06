@@ -19,7 +19,7 @@ pipeline {
     environment {
         APP_PORT      = '8085'
         APP_JAR       = 'target/psw-pipeline-base-0.0.1-SNAPSHOT.jar'
-        JMETER_HOME   = 'C:\\apache-jmeter-5.6.3'   // Ajustar a la ruta de tu JMeter
+        JMETER_HOME   = 'C:\\apache-jmeter-5.6.3\\apache-jmeter-5.6.3'   // Ajustar a la ruta de tu JMeter
         JMETER_USERS  = '50'                        // Usuarios concurrentes (50 - 100)
         SLACK_CHANNEL = '#jenkins'                  // Canal de Slack
     }
@@ -66,7 +66,9 @@ pipeline {
                             start "psw-app" /B java -jar ${APP_JAR} > app.log 2>&1
                             powershell -NoProfile -Command "for(\$i=0;\$i -lt 30;\$i++){try{Invoke-WebRequest http://localhost:${APP_PORT}/actuator/health -UseBasicParsing | Out-Null; exit 0}catch{Start-Sleep 2}}; exit 1"
                             call "%JMETER_HOME%\\bin\\jmeter.bat" -n -f -t jmeter\\carga-psw.jmx -Jusuarios=${JMETER_USERS} -l jmeter\\resultados.jtl -e -o jmeter\\reporte
-                            for /f "tokens=5" %%a in ('netstat -ano ^| findstr :${APP_PORT} ^| findstr LISTENING') do taskkill /F /PID %%a
+                            set JMETER_RC=%ERRORLEVEL%
+                            for /f "tokens=5" %%a in ('netstat -ano ^| findstr :${APP_PORT} ^| findstr LISTENING') do taskkill /F /PID %%a >nul 2>&1
+                            exit /b %JMETER_RC%
                         """
                     }
                 }
