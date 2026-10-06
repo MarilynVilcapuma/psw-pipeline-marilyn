@@ -12,7 +12,7 @@ pipeline {
 
     tools {
         // Nombres definidos en: Administrar Jenkins > Tools
-        maven 'Maven'
+        maven 'Maven3'
         jdk 'JDK17'
     }
 
